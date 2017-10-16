@@ -5,9 +5,9 @@ Rails.application.routes.draw do
   # post '/login', to: 'sessions#login'
   # post '/logout', to: 'sessions#logout', as: 'logout'
 
-  get '/auth/:provider/callback', to: 'users#login'
-  get '/logout', to: 'users#logout', as: 'logout'
-  post '/logout', to: 'users#logout'
+  get '/auth/:provider/callback', to: 'sessions#login'
+  get '/logout', to: 'sessions#logout', as: 'logout'
+  post '/logout', to: 'sessions#logout'
   #how come we did not need a post method in class but i need one here?
 
   resources :works
