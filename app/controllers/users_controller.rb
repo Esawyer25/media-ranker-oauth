@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  skip_before_action :require_login, only: [:login]
   def index
     @users = User.all
   end
@@ -20,32 +21,34 @@ class UsersController < ApplicationController
           #new user saves fine
           session[:user_id] = user.id
           flash[:status] = :success
-          flash[:message] = "Successfully logged in as new user #{user.name}"
+          flash[:result_text] = "Successfully logged in as new user #{user.name}"
         else
           #new user cannot be saved, ex. the auth_hash has no provider
           flash[:status] = :failure
-          flash[:message] = "Could not log on as new user #{auth_hash['name']}"
+          flash[:result_text] = "Could not log on as new user #{auth_hash['name']}"
         end
 
       else
         #user has logged in before
         session[:user_id] = user.id
         flash[:status] = :success
-        flash[:message] = "Successfully logged in as new user #{user.name}"
+        flash[:result_text] = "Successfully logged in as new user #{user.name}"
       end
 
     else
       #auth hash has no user id
       flash[:status] = :failure
-      flash[:message] = "Authentication with github failed"
+      flash[:result_text] = "Authentication with github failed"
     end
     redirect_to root_path
   end
 
+
+
   def logout
     session[:user_id] = nil
     flash[:status] = :success
-    flash[:message] = "You have been logged out"
+    flash[:result_text] = "You have been logged out"
     redirect_to root_path
   end
 
