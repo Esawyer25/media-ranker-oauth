@@ -2,6 +2,7 @@ class WorksController < ApplicationController
   # We should always be able to tell what category
   # of work we're dealing with
   before_action :category_from_work, except: [:root, :index, :new, :create]
+  before_action :match_user, only: [:edit, :destroy]
   skip_before_action :require_login, only: [:root]
 
   def root
@@ -21,6 +22,7 @@ class WorksController < ApplicationController
 
   def create
     @work = Work.new(media_params)
+    @work[:owner_id] = session[:user_id]
     @media_category = @work.category
     if @work.save
       flash[:status] = :success
