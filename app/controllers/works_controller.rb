@@ -2,6 +2,7 @@ class WorksController < ApplicationController
   # We should always be able to tell what category
   # of work we're dealing with
   before_action :category_from_work, except: [:root, :index, :new, :create]
+  before_action :match_user, only: [:edit, :destroy]
   skip_before_action :require_login, only: [:root]
 
   def root
@@ -20,9 +21,17 @@ class WorksController < ApplicationController
   end
 
   def create
+    puts params
     @work = Work.new(media_params)
+    puts session[:user_id]
+    user = User.find_by(id: session[:user_id])
+    @work.users_id = user.id
+
+    puts "user #{user}"
+    puts "the work has details #{@work.inspect}"
+    puts "the work has a user #{@work.user}"
     @media_category = @work.category
-    if @work.save
+    if @work.save!
       flash[:status] = :success
       flash[:result_text] = "Successfully created #{@media_category.singularize} #{@work.id}"
       redirect_to work_path(@work)
@@ -98,5 +107,15 @@ private
     @work = Work.find_by(id: params[:id])
     render_404 unless @work
     @media_category = @work.category.downcase.pluralize
+  end
+
+  def match_user
+    #@user = User.find_by(id: session[:user_id])
+    @work = Work.find_by(id: params[:id])
+    unless session[:user_id] == @work.users_id.to_i
+      flash[:status] = :failure
+      flash[:result_text] = "You are not allowed to edit or delete work posted by another user"
+      redirect_back(fallback_location: root_path)
+    end
   end
 end
