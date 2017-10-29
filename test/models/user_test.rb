@@ -17,6 +17,11 @@ describe User do
         work.must_be_kind_of Work
       end
     end
+
+    it "can have a work" do
+      mariner = works(:mariner)
+      mariner.must_respond_to :users
+    end
   end
 
   describe "validations" do

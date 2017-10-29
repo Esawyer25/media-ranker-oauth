@@ -17,6 +17,13 @@ describe Work do
         user.must_be_kind_of User
       end
     end
+
+    it "has a user" do
+      dan = works(:dan)
+      dan.must_respond_to :works
+    end
+
+
   end
 
   describe "validations" do
